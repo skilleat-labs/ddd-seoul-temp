@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DDD Seoul 발표 시간표</title>
+<style>
+/* Layout: 교시 열(왼쪽) + 두 트랙 열. 좁은 화면에서는 교시별 카드로 쌓는다. */
+:root {
+  --bg: #f6f7fa;
+  --surface: #ffffff;
+  --fg: #1b2030;
+  --muted: #5d6478;
+  --line: #dde1ea;
+  --a: #2f56c9;
+  --a-soft: #e8edfb;
+  --b: #11795a;
+  --b-soft: #e3f4ee;
+  --hl: #fff4c2;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151d; --surface: #1b1f2a; --fg: #e8eaf1; --muted: #9aa1b5; --line: #2c3241;
+    --a: #8aa6ff; --a-soft: #1f2a4a; --b: #5fd1a8; --b-soft: #173a30; --hl: #4a4220;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12151d; --surface: #1b1f2a; --fg: #e8eaf1; --muted: #9aa1b5; --line: #2c3241;
+  --a: #8aa6ff; --a-soft: #1f2a4a; --b: #5fd1a8; --b-soft: #173a30; --hl: #4a4220;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.6; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-block: 40px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 40px; }
+h1, h2 { text-wrap: balance; line-height: 1.3; margin: 0; }
+h1 { font-size: 28px; }
+h2 { font-size: 20px; }
+p { margin: 0; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--muted); font-weight: 500; }
+header { display: grid; gap: 10px; }
+header p { color: var(--muted); }
+.lead { color: var(--muted); max-width: 70ch; }
+section { display: grid; gap: 16px; }
+
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.rule { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 4px; }
+.rule b { font-size: 14px; }
+.rule span { font-size: 13px; color: var(--muted); }
+
+.finder { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+select, textarea, input[type=text] { font: inherit; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; }
+select:focus-visible, textarea:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; }
+
+.grid { display: grid; grid-template-columns: 72px 1fr 1fr; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.grid > div { padding: 14px 16px; border-top: 1px solid var(--line); min-width: 0; }
+.grid .head { border-top: 0; font-weight: 700; font-size: 14px; }
+.head.ta { color: var(--a); background: var(--a-soft); }
+.head.tb { color: var(--b); background: var(--b-soft); }
+.time { font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.time .no { display: block; font-family: var(--font-body); font-weight: 700; color: var(--fg); font-size: 13px; }
+.full { grid-column: 2 / 4; color: var(--muted); font-size: 14px; }
+.full.plain { background: var(--bg); }
+.cell { display: grid; gap: 4px; }
+.cell .tag { display: none; font-size: 12px; font-weight: 700; }
+.cell .who { font-weight: 700; }
+.cell .what { font-size: 14px; }
+.cell .why { font-size: 13px; color: var(--muted); }
+.cell.ta { border-left: 3px solid var(--a); }
+.cell.tb { border-left: 3px solid var(--b); }
+.cell.mine { background: var(--hl); }
+.note { font-size: 13px; color: var(--muted); }
+
+.mybox { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 6px; }
+.mybox[hidden] { display: none !important; }
+
+.form { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 18px; }
+fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; min-width: 0; }
+legend { font-weight: 700; font-size: 14px; padding: 0; margin-bottom: 4px; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opts label { display: inline-flex; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; font-size: 14px; cursor: pointer; background: var(--bg); }
+.opts input { accent-color: var(--a); }
+textarea { width: 100%; min-height: 80px; resize: vertical; box-sizing: border-box; }
+button { font: inherit; font-weight: 700; border: 0; border-radius: 6px; padding: 10px 18px; background: var(--a); color: var(--surface); cursor: pointer; justify-self: start; }
+button[disabled] { opacity: .5; cursor: default; }
+.status { font-size: 14px; }
+.status.ok { color: var(--b); font-weight: 500; }
+.status.err { color: #c0392b; }
+.fallback { background: var(--surface); border: 1px dashed var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 8px; }
+.linkbtn { justify-self: start; display: inline-block; font-weight: 700; text-decoration: none; border: 1px solid var(--a); color: var(--a); border-radius: 6px; padding: 9px 18px; }
+.linkbtn:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; }
+.url { word-break: break-all; user-select: all; }
+.fallback pre { margin: 0; white-space: pre-wrap; font-family: var(--font-body); font-size: 14px; background: var(--bg); border-radius: 6px; padding: 12px; }
+
+@media (max-width: 720px) {
+  .grid { grid-template-columns: 1fr; }
+  .grid .head { display: none; }
+  .full { grid-column: 1; }
+  .time { background: var(--bg); }
+  .cell .tag { display: block; }
+  .cell.ta .tag { color: var(--a); }
+  .cell.tb .tag { color: var(--b); }
+}
+
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">DDD SEOUL · 발표자 공유용 · 시간표 초안</span>
+    <h1>세션 시간표 초안</h1>
+    <p>두 트랙으로 7개씩 진행하며, 각 세션은 40분이고 중간중간 10분씩 휴식이 있습니다. 세부 시간은 이후에 공유드립니다.</p>
+  </header>
+
+  <section>
+    <h2>이렇게 배치했어요</h2>
+    <p class="lead">모든 세션이 각자의 자리에서 가장 잘 전달될 수 있도록, 청중이 하루를 따라가는 흐름을 기준으로 순서를 정했습니다. 앞 교시와 뒤 교시 사이에 우열은 없습니다.</p>
+    <div class="rules">
+      <div class="rule"><b>데모로 여는 첫 시간</b><span>트랙의 문을 여는 자리라, 바로 눈으로 따라갈 수 있는 라이브 데모 세션을 모셨습니다.</span></div>
+      <div class="rule"><b>깊이 있는 이야기는 2~3교시</b><span>집중이 많이 필요한 세션은 청중이 가장 또렷할 때 들을 수 있도록 모셨습니다.</span></div>
+      <div class="rule"><b>4~5교시엔 새로운 시선</b><span>하루의 한가운데에 결이 다른 이야기를 더해, 청중이 끝까지 호기심을 이어 갈 수 있게 했습니다.</span></div>
+      <div class="rule"><b>비슷한 주제는 다른 교시에</b><span>관심 있는 분이 두 세션을 모두 들으실 수 있도록 같은 교시에 두지 않았습니다.</span></div>
+      <div class="rule"><b>오래 남는 마무리</b><span>하루를 정리하며 생각할 거리를 남겨 주는 세션으로 트랙을 마무리합니다.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>시간표</h2>
+    <div class="finder">
+      <label for="who">내 세션 찾기</label>
+      <select id="who"><option value="">발표자 선택</option></select>
+    </div>
+    <div class="mybox" id="mybox" hidden></div>
+    <div class="grid" id="grid"></div>
+    <p class="note">세션명은 내용을 짧게 요약한 표기입니다. 세부 시간은 이후에 공유드립니다.</p>
+  </section>
+
+  <section>
+    <h2>순서 확인 · 변경 요청</h2>
+    <p class="note">지금 순서가 괜찮으시면 '이대로 좋아요'를 보내 주세요. 다른 순서를 원하시면 부담 없이 알려 주세요. 보내 주신 의견은 모두 꼼꼼히 살펴보고, 다른 발표자분과 자리를 바꿔야 할 때는 두 분 모두의 의견을 여쭌 뒤 확정해 안내드리겠습니다.</p>
+    <div class="form" id="req">
+      <fieldset>
+        <legend>발표자</legend>
+        <select id="f-speaker"><option value="">선택해 주세요</option></select>
+      </fieldset>
+      <fieldset>
+        <legend>현재 순서는</legend>
+        <div class="opts" id="f-kind">
+          <label><input type="radio" name="kind" value="keep" id="k-keep" checked> 이대로 좋아요</label>
+          <label><input type="radio" name="kind" value="change" id="k-change"> 바꾸고 싶어요</label>
+        </div>
+      </fieldset>
+      <fieldset id="f-prefer-wrap" hidden>
+        <legend>원하는 순서 (여러 개 선택 가능)</legend>
+        <div class="opts" id="f-prefer"></div>
+      </fieldset>
+      <fieldset id="f-avoid-wrap" hidden>
+        <legend>어려운 순서</legend>
+        <div class="opts" id="f-avoid"></div>
+      </fieldset>
+      <fieldset>
+        <legend><label for="f-note">메모 (선택)</label></legend>
+        <textarea id="f-note" placeholder="예: 늦은 오후에 다른 일정이 있어요 / 데모 준비 때문에 1교시는 피하고 싶어요"></textarea>
+      </fieldset>
+      <button type="button" id="f-submit">회신 메시지 만들기</button>
+      <p class="status" id="f-status" aria-live="polite"></p>
+    </div>
+    <div class="fallback" id="out" hidden>
+      <p><b>1.</b> 아래 내용을 복사하세요.</p>
+      <pre id="out-text"></pre>
+      <button type="button" id="copy">복사하기</button>
+      <p class="status" id="copy-status" aria-live="polite"></p>
+      <p><b>2.</b> 회신 폼을 열어 복사한 내용을 붙여 넣고 제출해 주세요.</p>
+      <a class="linkbtn" id="form-link" href="#" target="_blank" rel="noopener">회신 폼 열기</a>
+      <p class="note">링크가 열리지 않으면 이 주소를 브라우저에 붙여 넣어 주세요: <span id="form-url" class="url"></span></p>
+    </div>
+  </section>
+</div>
+
+<script>
+const SLOTS = [
+  { no: "1교시",
+    a: { who: "정보현", what: "GitHub Copilot과 MongoDB MCP Server·Agent Skills: 낯선 데이터셋에서 C# 코드까지", why: "트랙 A의 문을 여는 자리라, 바로 눈으로 따라갈 수 있는 라이브 데모를 첫 순서로 모셨습니다." },
+    b: { who: "박결", what: "Copilot Studio 대신 GitHub Copilot 바이브 코딩으로 에이전트 만들기 (feat. M365 Agent Toolkit)", why: "직접 만들어 보는 데모로 트랙 B의 시작을 활기차게 열어 주실 세션입니다." } },
+  { no: "2교시",
+    a: { who: "김평권", what: "Localization.md: 서식을 지키는 AI 문서 번역 플랫폼", why: "설계의 깊이가 큰 세션이라, 청중이 가장 집중할 수 있는 시간에 모셨습니다." },
+    b: { who: "진미나", what: "비개발자에게 날개를 달아준 GitHub Copilot", why: "비개발자의 시선을 보여 주는 세션으로, 옆 트랙과 다른 관심을 가진 청중까지 함께 챙길 수 있습니다." } },
+  { no: "3교시",
+    a: { who: "김유석", what: "ERP 앞에 AI 친화적 Anti-Corruption Layer(MCP) 두기", why: "기업 시스템과 AI를 잇는 실전 설계 세션입니다. MCP를 다룬 1교시 정보현 님 세션과 함께 들으실 수 있도록 간격을 두었습니다." },
+    b: { who: "김인숙 · 방소현", what: "AI는 디자인보다 데이터를 해석한다", why: "디자인과 코드 사이를 다루는 세션이라, 옆 트랙과 다른 관심을 가진 청중이 고르게 찾아오실 수 있습니다." } },
+  { no: "4교시",
+    a: { who: "손태웅", what: "Apple 생태계 전용 Temporal Upscaling 개발기", why: "플랫폼의 제약을 넘어선 개발 도전기로, 하루의 한가운데에 새로운 결의 이야기를 더해 주실 세션입니다." },
+    b: { who: "정태영", what: "코드를 안 쓰는 기획자가 AI 에이전트에게 맡긴 '완료' 기준 (밥지도)", why: "누구나 함께 고민해 볼 질문을 던지는 이야기라, 하루의 한가운데에서 청중의 몰입을 이끌어 주실 세션입니다. 비개발자의 시선을 다룬 진미나 님 세션과 함께 들으실 수 있도록 간격을 두었습니다." } },
+  { no: "5교시",
+    a: { who: "송민석", what: "Localizeflow: 에이전트는 판단만, 실행은 ACA Jobs가", why: "실패와 복구를 실제로 보여 주는 라이브 데모로 오후의 흐름에 힘을 더해 주실 세션입니다. 문서 번역을 다룬 김평권 님 세션과 함께 들으실 수 있도록 교시를 나눴습니다." },
+    b: { who: "김영서", what: "로컬에서 도는 AI 안경용 AI 에이전트", why: "AI 안경과 로컬 에이전트를 직접 보여 주는 데모로, 청중의 호기심을 새롭게 깨워 주실 세션입니다." } },
+  { no: "6교시",
+    a: { who: "유저스틴", what: "내가 만든 에이전트가 돈 먹는 하마였다고?", why: "에이전트를 만들고 운영하는 이야기를 들은 다음이라, 비용 최적화 이야기를 가장 실감 나게 들을 수 있는 자리입니다." },
+    b: { who: "문경필", what: "시켜서 하는 AX에서 '내가 할 수 있게 된' AX로", why: "조직과 사람의 변화를 다루는 세션으로, 기술 이야기와 균형을 맞춰 주실 자리입니다." } },
+  { no: "7교시",
+    a: { who: "전제영", what: "라즈베리파이 홈랩 위에서 AI 에이전트 팀이 일하는 라이브 데모", why: "지금까지의 이야기를 에이전트 팀이 실제로 일하는 장면으로 모아 보여 주실 트랙 A의 마무리입니다." },
+    b: { who: "권수연", what: "\"쌤, GPT가 다 해주는데 코딩 왜 배워요?\"", why: "기술 너머 사람과 배움에 대한 이야기로, 트랙 B를 오래 남는 여운으로 마무리해 주실 세션입니다." } },
+];
+const SPEAKERS = SLOTS.flatMap(s => [s.a.who, s.b.who]).sort((x, y) => x.localeCompare(y, "ko"));
+
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+function renderGrid(mine) {
+  const g = document.getElementById("grid");
+  g.textContent = "";
+  g.append(el("div", "head", "순서"), el("div", "head ta", "Track A · Build & Run (에이전트를 만들고 운영하기)"), el("div", "head tb", "Track B · Work with AI (AI와 함께 일하는 법)"));
+  SLOTS.forEach(s => {
+    const t = el("div", "time"); t.append(el("span", "no", s.no));
+    g.append(t);
+    [["a", "Track A"], ["b", "Track B"]].forEach(([k, name]) => {
+      const x = s[k];
+      const c = el("div", "cell t" + k + (x.who === mine ? " mine" : ""));
+      c.append(el("span", "tag", name), el("span", "who", x.who), el("span", "what", x.what), el("span", "why", x.why));
+      g.append(c);
+    });
+  });
+}
+
+function renderMine(name) {
+  const box = document.getElementById("mybox");
+  if (!name) { box.hidden = true; return; }
+  const s = SLOTS.find(s => s.a.who === name || s.b.who === name);
+  const isA = s.a.who === name; const me = isA ? s.a : s.b; const other = isA ? s.b : s.a;
+  box.textContent = "";
+  box.append(
+    el("b", null, `${name} 님은 ${s.no} · ${isA ? "Track A" : "Track B"}입니다.`),
+    el("span", null, `이 자리에 둔 이유: ${me.why}`),
+    el("span", "note", `같은 교시 옆 트랙: ${other.who} · ${other.what}`)
+  );
+  box.hidden = false;
+}
+
+const who = document.getElementById("who");
+SPEAKERS.forEach(n => who.append(new Option(n, n)));
+who.addEventListener("change", () => { renderGrid(who.value); renderMine(who.value); });
+renderGrid("");
+
+// 요청 폼
+const fSpeaker = document.getElementById("f-speaker");
+SPEAKERS.forEach(n => fSpeaker.append(new Option(n, n)));
+const slotLabels = SLOTS.map(s => s.no);
+function buildChecks(id, prefix) {
+  const box = document.getElementById(id);
+  slotLabels.forEach((l, i) => {
+    const lab = el("label"); const inp = document.createElement("input");
+    inp.type = "checkbox"; inp.value = l; inp.id = `${prefix}-${i}`;
+    lab.append(inp, document.createTextNode(l)); box.append(lab);
+  });
+}
+buildChecks("f-prefer", "p"); buildChecks("f-avoid", "v");
+function syncKind() {
+  const change = document.getElementById("k-change").checked;
+  document.getElementById("f-prefer-wrap").hidden = !change;
+  document.getElementById("f-avoid-wrap").hidden = !change;
+}
+document.querySelectorAll("input[name=kind]").forEach(r => r.addEventListener("change", syncKind));
+who.addEventListener("change", () => { if (who.value && !fSpeaker.value) fSpeaker.value = who.value; });
+
+function checked(id) { return [...document.querySelectorAll(`#${id} input:checked`)].map(i => i.value); }
+function setChecked(id, vals) { document.querySelectorAll(`#${id} input`).forEach(i => { i.checked = (vals || []).includes(i.value); }); }
+
+// 회신 폼 주소 (Microsoft Forms 응답 링크)
+const FORM_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=lf5Raklqlk-nYCkAHLtMY6WOxyYKBghJmSTtxXz64fxUMlNCWklWQURYNVA2STNWRDNCWkFZRDZBNC4u";
+document.getElementById("form-link").href = FORM_URL;
+document.getElementById("form-url").textContent = FORM_URL;
+
+function buildMessage() {
+  const kind = document.getElementById("k-change").checked ? "바꾸고 싶어요" : "이대로 좋아요";
+  const change = kind === "바꾸고 싶어요";
+  const prefer = change ? checked("f-prefer") : [];
+  const avoid = change ? checked("f-avoid") : [];
+  return [
+    "[DDD Seoul 시간표 회신]",
+    "발표자: " + fSpeaker.value,
+    "현재 순서: " + kind,
+    "원하는 순서: " + (prefer.join(", ") || "-"),
+    "어려운 순서: " + (avoid.join(", ") || "-"),
+    "메모: " + (document.getElementById("f-note").value.trim() || "-"),
+  ].join("\n");
+}
+const form = document.getElementById("req");
+const status = document.getElementById("f-status");
+document.getElementById("f-submit").addEventListener("click", () => {
+  if (!fSpeaker.value) { status.className = "status err"; status.textContent = "발표자를 선택해 주세요."; return; }
+  status.textContent = "";
+  document.getElementById("out-text").textContent = buildMessage();
+  document.getElementById("out").hidden = false;
+  document.getElementById("copy-status").textContent = "";
+});
+function legacyCopy(text) {
+  const ta = document.createElement("textarea");
+  ta.value = text; ta.setAttribute("readonly", "");
+  ta.style.position = "fixed"; ta.style.opacity = "0"; ta.style.left = "-9999px";
+  document.body.appendChild(ta); ta.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch (e) {}
+  ta.remove();
+  return ok;
+}
+document.getElementById("copy").addEventListener("click", async () => {
+  const pre = document.getElementById("out-text");
+  const cs = document.getElementById("copy-status");
+  const done = () => { cs.className = "status ok"; cs.textContent = "복사했습니다. 아래 '회신 폼 열기'를 눌러 붙여 넣어 주세요."; };
+  // SharePoint 미리보기처럼 iframe에서 열리면 Clipboard API가 막히는 경우가 많아 예전 방식(execCommand)을 먼저 시도
+  if (legacyCopy(pre.textContent)) { done(); return; }
+  try {
+    await navigator.clipboard.writeText(pre.textContent);
+    done();
+  } catch (e) {
+    const r = document.createRange(); r.selectNodeContents(pre);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    cs.className = "status"; cs.textContent = "자동 복사가 안 돼서 내용을 선택해 두었습니다. Ctrl+C(⌘+C)로 복사한 뒤 회신 폼에 붙여 넣어 주세요.";
+  }
+});
+</script>
+
+</body>
+</html>
